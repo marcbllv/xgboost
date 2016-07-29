@@ -38,6 +38,8 @@ struct MetaInfo {
   uint64_t num_nonzero;
   /*! \brief label of each instance */
   std::vector<bst_float> labels;
+  /*! \brief label distribution of each instance */
+  std::vector<bst_float> true_p;
   /*!
    * \brief specified root index of each instance,
    *  can be used for multi task setting
@@ -50,6 +52,8 @@ struct MetaInfo {
   std::vector<bst_uint> group_ptr;
   /*! \brief weights of each instance, optional */
   std::vector<bst_float> weights;
+  /*! \brief weights of each class, optional */
+  std::vector<bst_float> class_weights;
   /*!
    * \brief initialized margins,
    * if specified, xgboost will start from this init margin
