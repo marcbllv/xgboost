@@ -164,7 +164,7 @@ class BrierMultiClassObj : public ObjFunction {
         1.1803704493, 1.34414875433, 1.11683830693, 1.08083910312, 0.503152249073};
 
     // TODO Check that: true probas == labels ??
-    const std::vector<float> true_probas = info.true_p;
+    const std::vector<float> true_probas = info.labels;
 
     //int true_probas_error = 0;
 

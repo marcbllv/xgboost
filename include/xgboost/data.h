@@ -38,8 +38,6 @@ struct MetaInfo {
   uint64_t num_nonzero;
   /*! \brief label of each instance */
   std::vector<bst_float> labels;
-  /*! \brief label distribution of each instance */
-  std::vector<bst_float> true_p;
   /*!
    * \brief specified root index of each instance,
    *  can be used for multi task setting
