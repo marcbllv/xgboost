@@ -66,10 +66,10 @@ class SoftmaxMultiClassObj : public ObjFunction {
           const float h = 2.0f * p * (1.0f - p) * wt;
           if (label == k) {
             out_gpair->at(i * nclass + k) = bst_gpair((p - 1.0f) * wt, h);
-            std::cout << (p - 1.0f) * wt << " " << h << " " << p << std::endl;
+            //std::cout << (p - 1.0f) * wt << " " << h << " " << p << std::endl;
           } else {
             out_gpair->at(i * nclass + k) = bst_gpair(p* wt, h);
-            std::cout << p * wt << " " << h << " " << p << std::endl;
+            //std::cout << p * wt << " " << h << " " << p << std::endl;
           }
         }
       }
@@ -167,11 +167,11 @@ class BrierMultiClassObj : public ObjFunction {
 
     // TODO Check that: true probas == labels ??
     // const std::vector<float> true_probas = info.labels;
-    std::cout << "size: " << info.labels.size() << std::endl;
+    //std::cout << "size: " << info.labels.size() << std::endl;
 
     #pragma omp parallel
     {
-      std::cout << "nclass: "<< nclass << std::endl;
+      //std::cout << "nclass: "<< nclass << std::endl;
       std::vector<float> rec(nclass);
       std::vector<float> true_p(nclass);
       #pragma omp for schedule(static)
@@ -180,9 +180,9 @@ class BrierMultiClassObj : public ObjFunction {
         for (int k = 0; k < nclass; ++k) {
           rec[k] = preds[i * nclass + k];
           true_p[k] = (k == info.labels[i] ? 1.0f : 0.0f);
-          std::cout << true_p[k] << " ";
+          //std::cout << true_p[k] << " ";
         }
-        std::cout << std::endl;
+        //std::cout << std::endl;
         // apply softmax to rec
         common::Softmax(&rec);
         //int label = static_cast<int>(info.labels[i]); -> we don't care about labels anymore
@@ -213,7 +213,7 @@ class BrierMultiClassObj : public ObjFunction {
           hess = 1;
 
           // LOGS
-          std::cout << grad << " " << hess << " " << p_hat_k << " " << p_true_k << std::endl;
+          //std::cout << grad << " " << hess << " " << p_hat_k << " " << p_true_k << std::endl;
 
           out_gpair->at(i * nclass + k) = bst_gpair(grad * wt, hess * wt);
         }

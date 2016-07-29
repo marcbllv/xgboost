@@ -24,7 +24,7 @@ X, y = dummydata()
 dtrain = xgb.DMatrix(X, label=y)
 dtest  = xgb.DMatrix(X)
 #param = {'max_depth':5, 'eta':1, 'silent':1, 'n_estimators': 100, 'objective':'multi:brier', 'num_class':3}
-param = {'max_depth':5, 'eta':1, 'silent':1, 'n_estimators': 100, 'objective':'multi:softprob', 'num_class':3}
+param = {'max_depth':5, 'eta':1, 'silent':1, 'n_estimators': 100, 'objective':'multi:brier', 'num_class':3}
 
 print "--- DATA ---"
 print X
