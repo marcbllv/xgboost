@@ -24,15 +24,16 @@ X, y = dummydata()
 dtrain = xgb.DMatrix(X, label=y)
 dtest  = xgb.DMatrix(X)
 #param = {'max_depth':5, 'eta':1, 'silent':1, 'n_estimators': 100, 'objective':'multi:brier', 'num_class':3}
-param = {'max_depth':5, 'eta':1, 'silent':1, 'n_estimators': 100, 'objective':'multi:brier', 'num_class':3}
-
+param = {'max_depth':5, 'eta':1, 'silent':1, 'objective':'multi:brier', 'num_class':3}
+n_trees = 100
 print "--- DATA ---"
 print X
 print y
 print "--- PARAMS ---"
 print param
+print "%d trees" % n_trees 
 print "--- training starts ---"
 
-bst = xgb.train(param, dtrain)
+bst = xgb.train(param, dtrain, num_boost_round=n_trees)
 print "--- PREDICTION ---"
 print bst.predict(dtest)
