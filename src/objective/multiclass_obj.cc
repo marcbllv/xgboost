@@ -66,8 +66,10 @@ class SoftmaxMultiClassObj : public ObjFunction {
           const float h = 2.0f * p * (1.0f - p) * wt;
           if (label == k) {
             out_gpair->at(i * nclass + k) = bst_gpair((p - 1.0f) * wt, h);
+            std::cout << (p - 1.0f) * wt << " " << h << " " << p << std::endl;
           } else {
             out_gpair->at(i * nclass + k) = bst_gpair(p* wt, h);
+            std::cout << p * wt << " " << h << " " << p << std::endl;
           }
         }
       }
@@ -166,10 +168,9 @@ class BrierMultiClassObj : public ObjFunction {
     // TODO Check that: true probas == labels ??
     const std::vector<float> true_probas = info.labels;
 
-    //int true_probas_error = 0;
-
     #pragma omp parallel
     {
+      std::cout << "nclass: "<< nclass << std::endl;
       std::vector<float> rec(nclass);
       std::vector<float> true_p(nclass);
       #pragma omp for schedule(static)
@@ -204,6 +205,12 @@ class BrierMultiClassObj : public ObjFunction {
           }
           grad *= 2 * p_hat_k;
           hess *= 2 ;
+
+          // CONSTANT HESSIAN
+          hess = 0.001;
+
+          // LOGS
+          std::cout << grad << " " << hess << " " << p_hat_k << std::endl;
 
           out_gpair->at(i * nclass + k) = bst_gpair(grad * wt, hess * wt);
         }
