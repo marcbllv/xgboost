@@ -166,7 +166,8 @@ class BrierMultiClassObj : public ObjFunction {
         1.1803704493, 1.34414875433, 1.11683830693, 1.08083910312, 0.503152249073};
 
     // TODO Check that: true probas == labels ??
-    const std::vector<float> true_probas = info.labels;
+    // const std::vector<float> true_probas = info.labels;
+    std::cout << "size: " << info.labels.size() << std::endl;
 
     #pragma omp parallel
     {
@@ -178,8 +179,10 @@ class BrierMultiClassObj : public ObjFunction {
         // load predictions for i-th example into rec
         for (int k = 0; k < nclass; ++k) {
           rec[k] = preds[i * nclass + k];
-          true_p[k] = true_probas[i * nclass + k];
+          true_p[k] = (k == info.labels[i] ? 1.0f : 0.0f);
+          std::cout << true_p[k] << " ";
         }
+        std::cout << std::endl;
         // apply softmax to rec
         common::Softmax(&rec);
         //int label = static_cast<int>(info.labels[i]); -> we don't care about labels anymore
@@ -207,10 +210,10 @@ class BrierMultiClassObj : public ObjFunction {
           hess *= 2 ;
 
           // CONSTANT HESSIAN
-          hess = 0.001;
+          hess = 1;
 
           // LOGS
-          std::cout << grad << " " << hess << " " << p_hat_k << std::endl;
+          std::cout << grad << " " << hess << " " << p_hat_k << " " << p_true_k << std::endl;
 
           out_gpair->at(i * nclass + k) = bst_gpair(grad * wt, hess * wt);
         }
