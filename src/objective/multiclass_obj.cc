@@ -211,7 +211,7 @@ class BrierMultiClassObj : public ObjFunction {
           hess *= 2 ;
 
           // CONSTANT HESSIAN
-          //hess = 1;
+          hess = info.hessian[0];
 
           // LOGS
           //std::cout << grad << " " << hess << " " << p_hat_k << " " << p_true_k << std::endl;

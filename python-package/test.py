@@ -17,14 +17,25 @@ def dummydata():
 
         [0.8, 1.2, 2],
         [1.1, 0.6, 2]]),
-        columns=['f1', 'f2', 'class'])
-    return data.drop('class', axis=1), data['class']
+        columns=['f1', 'f2', 'f3'])
+
+    y = np.array([
+        [0.7, 0.3, 0.0],
+        [1, 0, 0],
+        [0.5, 0, 0.5],
+        [0.5, 0, 0.5],
+        [0.0, 0.6, 0.4],
+        [0.0, 0.5, 0.5],
+        [0.0, 0.2, 0.8],
+        [0.1, 0.1, 0.8]])
+
+    return data, y
 
 X, y = dummydata()
-dtrain = xgb.DMatrix(X, label=y)
+dtrain = xgb.DMatrix(X, label=y.flatten(), hessian=np.array([0.01]))
 dtest  = xgb.DMatrix(X)
 #param = {'max_depth':5, 'eta':1, 'silent':1, 'n_estimators': 100, 'objective':'multi:brier', 'num_class':3}
-param = {'eval_metric':'mbrierloss', 'max_depth':5, 'eta':1, 'silent':1, 'objective':'multi:brier', 'num_class':3}
+param = {'max_depth':5, 'eta':1, 'silent':1, 'objective':'multi:brier', 'num_class':3}
 n_trees = 100
 print "--- DATA ---"
 print X

@@ -220,7 +220,7 @@ class DMatrix(object):
     _feature_types = None
 
     def __init__(self, data, label=None, missing=None,
-                 weight=None, silent=False,
+                 weight=None, silent=False, hessian=1,
                  feature_names=None, feature_types=None,
                  true_probas=None):
         """
@@ -276,6 +276,9 @@ class DMatrix(object):
                 raise TypeError('can not initialize DMatrix from {}'.format(type(data).__name__))
         if label is not None:
             self.set_label(label)
+        if hessian is not None:
+            self.hessian = np.array([hessian])
+            self.set_float_info('hessian', self.hessian)
         if true_probas is not None:
             self.set_true_probas(true_probas)
         if weight is not None:

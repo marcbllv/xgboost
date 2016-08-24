@@ -42,6 +42,8 @@ struct MetaInfo {
    * \brief specified root index of each instance,
    *  can be used for multi task setting
    */
+  std::vector<bst_float> hessian;
+
   std::vector<bst_uint> root_index;
   /*!
    * \brief the index of begin and end of a group
