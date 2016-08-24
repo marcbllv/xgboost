@@ -220,8 +220,9 @@ class DMatrix(object):
     _feature_types = None
 
     def __init__(self, data, label=None, missing=None,
-                 weight=None, silent=False,
-                 feature_names=None, feature_types=None):
+                 weight=None, silent=False, hessian=1,
+                 feature_names=None, feature_types=None,
+                 true_probas=None):
         """
         Data matrix used in XGBoost.
 
@@ -254,6 +255,7 @@ class DMatrix(object):
                                                                 feature_names,
                                                                 feature_types)
         label = _maybe_pandas_label(label)
+        true_probas = _maybe_pandas_label(true_probas)
 
         if isinstance(data, STRING_TYPES):
             self.handle = ctypes.c_void_p()
@@ -274,6 +276,11 @@ class DMatrix(object):
                 raise TypeError('can not initialize DMatrix from {}'.format(type(data).__name__))
         if label is not None:
             self.set_label(label)
+        if hessian is not None:
+            self.hessian = np.array([hessian])
+            self.set_float_info('hessian', self.hessian)
+        if true_probas is not None:
+            self.set_true_probas(true_probas)
         if weight is not None:
             self.set_weight(weight)
 
@@ -421,6 +428,16 @@ class DMatrix(object):
         """
         self.set_float_info('label', label)
 
+    def set_true_probas(self, true_probas):
+        """Set true probabilities of dmatrix
+
+        Parameters
+        ----------
+        true_probas: array like
+            The true probabilities to be set into DMatrix
+        """
+        self.set_float_info('true_probas', true_probas)
+
     def set_weight(self, weight):
         """ Set weight of each instance.
 
@@ -467,6 +484,15 @@ class DMatrix(object):
         label : array
         """
         return self.get_float_info('label')
+
+    def get_true_probas(self):
+        """Get the true probabilities of the DMatrix.
+
+        Returns
+        -------
+        true_probas : array
+        """
+        return self.get_float_info('true_probas')
 
     def get_weight(self):
         """Get the weight of the DMatrix.

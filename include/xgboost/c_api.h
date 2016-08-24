@@ -44,6 +44,8 @@ typedef struct {
   /*! \brief labels of each instance */
   float* label;
   /*! \brief weight of each instance, can be NULL */
+  float* hessian;
+  /*! \brief weight of each instance, can be NULL */
   float* weight;
   /*! \brief feature index */
   int* index;

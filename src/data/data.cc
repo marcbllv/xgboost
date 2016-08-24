@@ -113,6 +113,10 @@ void MetaInfo::SetInfo(const char* key, const void* dptr, DataType dtype, size_t
     root_index.resize(num);
     DISPATCH_CONST_PTR(dtype, dptr, cast_dptr,
                        std::copy(cast_dptr, cast_dptr + num, root_index.begin()));
+  } else if (!std::strcmp(key, "hessian")) {
+    hessian.resize(num);
+    DISPATCH_CONST_PTR(dtype, dptr, cast_dptr,
+                       std::copy(cast_dptr, cast_dptr + num, hessian.begin()));
   } else if (!std::strcmp(key, "label")) {
     labels.resize(num);
     DISPATCH_CONST_PTR(dtype, dptr, cast_dptr,

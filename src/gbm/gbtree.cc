@@ -130,7 +130,7 @@ struct GBTreeModelParam : public dmlc::Parameter<GBTreeModelParam> {
 // gradient boosted trees
 class GBTree : public GradientBooster {
  public:
-  GBTree() : num_pbuffer(0) {}
+  GBTree() : num_pbuffer(0) { }
 
   void Configure(const std::vector<std::pair<std::string, std::string> >& cfg) override {
     this->cfg = cfg;
@@ -198,6 +198,7 @@ class GBTree : public GradientBooster {
   void DoBoost(DMatrix* p_fmat,
                int64_t buffer_offset,
                std::vector<bst_gpair>* in_gpair) override {
+      //std::cout << std::endl << "NEW TREE" << std::endl;
     const std::vector<bst_gpair>& gpair = *in_gpair;
     std::vector<std::vector<std::unique_ptr<RegTree> > > new_trees;
     if (mparam.num_output_group == 1) {

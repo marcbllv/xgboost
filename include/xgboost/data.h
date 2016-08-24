@@ -42,6 +42,8 @@ struct MetaInfo {
    * \brief specified root index of each instance,
    *  can be used for multi task setting
    */
+  std::vector<bst_float> hessian;
+
   std::vector<bst_uint> root_index;
   /*!
    * \brief the index of begin and end of a group
@@ -50,6 +52,8 @@ struct MetaInfo {
   std::vector<bst_uint> group_ptr;
   /*! \brief weights of each instance, optional */
   std::vector<bst_float> weights;
+  /*! \brief weights of each class, optional */
+  std::vector<bst_float> class_weights;
   /*!
    * \brief initialized margins,
    * if specified, xgboost will start from this init margin
