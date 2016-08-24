@@ -153,7 +153,7 @@ class BrierMultiClassObj : public ObjFunction {
                    std::vector<bst_gpair>* out_gpair) override {
     CHECK_NE(info.labels.size(), 0) << "label set cannot be empty";
     CHECK(preds.size() == info.labels.size())
-        << "BrierMultiClassObj: label size and pred size does not match."
+        << "BrierMultiClassObj: label size and pred size does not match." << std::endl
         << "Brier loss needs label array to have the following shape: (n_examples, n_classes).";
 
     out_gpair->resize(preds.size());
