@@ -154,8 +154,9 @@ class BrierMultiClassObj : public ObjFunction {
                    int iter,
                    std::vector<bst_gpair>* out_gpair) override {
     CHECK_NE(info.labels.size(), 0) << "label set cannot be empty";
-    CHECK(preds.size() == (static_cast<size_t>(param_.num_class) * info.labels.size()))
-        << "BrierMultiClassObj: label size and pred size does not match";
+    CHECK(preds.size() == info.labels.size())
+        << "BrierMultiClassObj: label size and pred size does not match" << std::endl
+        << "Labels shape must be (n_samples, n_classes)";
     out_gpair->resize(preds.size());
     const int nclass = param_.num_class;
     const omp_ulong ndata = static_cast<omp_ulong>(preds.size() / nclass);
@@ -179,7 +180,7 @@ class BrierMultiClassObj : public ObjFunction {
         // load predictions for i-th example into rec
         for (int k = 0; k < nclass; ++k) {
           rec[k] = preds[i * nclass + k];
-          true_p[k] = (k == info.labels[i] ? 1.0f : 0.0f);
+          true_p[k] = info.labels[i * nclass + k];
           //std::cout << true_p[k] << " ";
         }
         //std::cout << std::endl;
