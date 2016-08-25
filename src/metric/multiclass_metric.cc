@@ -123,7 +123,7 @@ struct EvalMClassProbaBase : public Metric {
         //CHECK_NE(info.labels.size(), 0) << "label set cannot be empty";
         CHECK(preds.size() == info.labels.size())
             << "label and prediction size not match";
-        const size_t nclass = preds.size() / info.labels.size();
+        const size_t nclass = info.labels.size() / info.num_row;
         CHECK_GE(nclass, 1)
             << "mbrierloss and merror are only used for multi-class classification,"
             << " use custom for binary classification";
@@ -132,29 +132,22 @@ struct EvalMClassProbaBase : public Metric {
         double sum = 0.0, wsum = 0.0;
         int label_error = 0;
 
-        const float * class_weights = {1.35298455691, 1.38684574053, 1.59587388404, 1.35318713948, 0.347783666015,
-                                       0.661081706198, 1.04723628621, 0.398865222651, 0.207586320237, 1.50578335208,
-                                       0.110181365961, 1.07803284435, 1.36560417316, 1.17024113802, 1.1933637414,
-                                       1.1803704493, 1.34414875433, 1.11683830693, 1.08083910312, 0.503152249073}
+        float class_weights[] = {1.35298455691, 1.38684574053, 1.59587388404, 1.35318713948, 0.347783666015,
+                                 0.661081706198, 1.04723628621, 0.398865222651, 0.207586320237, 1.50578335208,
+                                 0.110181365961, 1.07803284435, 1.36560417316, 1.17024113802, 1.1933637414,
+                                 1.1803704493, 1.34414875433, 1.11683830693, 1.08083910312, 0.503152249073};
 
         #pragma omp parallel for reduction(+: sum, wsum) schedule(static)
         for (bst_omp_uint i = 0; i < ndata; ++i) {
             const float wt = info.GetWeight(i);
-            int labels =  info.labels[i * nclass];
-            //if (label >= 0 && label < static_cast<int>(nclass)) {
 
-            sum += Derived::EvalRow(dmlc::BeginPtr(preds) + i * nclass,
-                    info.labels[i],
-                    dmlc::BeginPtr(info.class_weights),
+            sum += Derived::EvalRow(
+                    dmlc::BeginPtr(preds) + i * nclass,
+                    dmlc::BeginPtr(info.labels) + i * nclass,
+                    class_weights,
                     nclass) * wt;
             wsum += wt;
-            //} else {
-            //  label_error = label;
-            //}
         }
-        //CHECK(label_error >= 0 && label_error < static_cast<int>(nclass))
-        //    << "MultiClassEvaluation: label must be in [0, num_class),"
-        //    << " num_class=" << nclass << " but found " << label_error << " in label";
 
         double dat[2]; dat[0] = sum, dat[1] = wsum;
         if (distributed) {
@@ -186,30 +179,13 @@ struct EvalMClassProbaBase : public Metric {
 };
 
 /*! \brief match error */
-
-struct EvalBrierMatchError : public EvalMClassProbaBase<EvalBrierMatchError> {
-    const char* Name() const override {
-        return "mbriererror";
-    }
-    inline static float EvalRow(const float *pred,
-            int label,
-            const float *class_weights,
-            size_t nclass) {
-        std::cout << common::FindMaxIndex(pred, pred + nclass) << std::endl;
-        return common::FindMaxIndex(pred, pred + nclass) != pred + static_cast<int>(label);
-    }
-};
-
-
-
-/*! \brief match error */
 struct EvalMultiBrierLoss : public EvalMClassProbaBase<EvalMultiBrierLoss> {
     const char* Name() const override {
         return "mbrierloss";
     }
     inline static float EvalRow(const float *pred,
-            float *label,
-            float *class_weights,
+            const float *label,
+            const float *class_weights,
             size_t nclass) {
         float sum = 0.0;
         for(int i  = 0 ; i < nclass ; i++) {
@@ -225,18 +201,12 @@ XGBOOST_REGISTER_METRIC(MatchError, "merror")
 .describe("Multiclass classification error.")
 .set_body([](const char* param) { return new EvalMatchError(); });
 
-// new
-XGBOOST_REGISTER_METRIC(MatchProbaError, "mbriererror")
-.describe("Multiclass classification error.")
-.set_body([](const char* param) { return new EvalBrierMatchError(); });
-
 XGBOOST_REGISTER_METRIC(MultiLogLoss, "mlogloss")
 .describe("Multiclass negative loglikelihood.")
 .set_body([](const char* param) { return new EvalMultiLogLoss(); });
 
-// new
 XGBOOST_REGISTER_METRIC(EvalMultiBrierLoss, "mbrierloss")
 .describe("Multiclass weighted Brier loss.")
-.set_body([](const char* param) { return new EvalMultiLogLoss(); });
+.set_body([](const char* param) { return new EvalMultiBrierLoss(); });
 }  // namespace metric
 }  // namespace xgboost
