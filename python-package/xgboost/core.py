@@ -220,7 +220,7 @@ class DMatrix(object):
     _feature_types = None
 
     def __init__(self, data, label=None, missing=None,
-                 weight=None, silent=False, hessian=1,
+                 weight=None, silent=False, hessian=-1,
                  feature_names=None, feature_types=None,
                  true_probas=None):
         """
