@@ -213,8 +213,7 @@ class BrierMultiClassObj : public ObjFunction {
             hess = info.hessian[0];
           }
 
-          // LOGS
-          //std::cout << grad << " " << hess << " " << p_hat_k << " " << p_true_k << std::endl;
+          std::cout << info.num_rows << " " << info.num_class << std::endl;
 
           out_gpair->at(i * nclass + k) = bst_gpair(grad * wt, hess * wt);
         }
