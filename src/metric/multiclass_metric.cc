@@ -125,10 +125,10 @@ struct EvalMClassProbaBase : public Metric {
             << "label and prediction size not match";
         const size_t nclass = info.labels.size() / info.num_row;
         CHECK_GE(nclass, 1)
-            << "mbrierloss and merror are only used for multi-class classification,"
+            << "mbrierloss is only used for multi-class classification,"
             << " use custom for binary classification";
 
-        const bst_omp_uint ndata = static_cast<bst_omp_uint>(info.labels.size());
+        const bst_omp_uint ndata = static_cast<bst_omp_uint>(info.num_row);
         double sum = 0.0, wsum = 0.0;
         int label_error = 0;
 
@@ -136,6 +136,7 @@ struct EvalMClassProbaBase : public Metric {
                                  0.661081706198, 1.04723628621, 0.398865222651, 0.207586320237, 1.50578335208,
                                  0.110181365961, 1.07803284435, 1.36560417316, 1.17024113802, 1.1933637414,
                                  1.1803704493, 1.34414875433, 1.11683830693, 1.08083910312, 0.503152249073};
+
 
         #pragma omp parallel for reduction(+: sum, wsum) schedule(static)
         for (bst_omp_uint i = 0; i < ndata; ++i) {
@@ -191,6 +192,7 @@ struct EvalMultiBrierLoss : public EvalMClassProbaBase<EvalMultiBrierLoss> {
         for(int i  = 0 ; i < nclass ; i++) {
             sum += class_weights[i] * (label[i] - pred[i]) * (label[i] - pred[i]);
         }
+
         return sum;
     }
 };
